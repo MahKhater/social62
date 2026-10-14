@@ -34,7 +34,7 @@ def login():
         student_phone = request.form.get("phone")
         device_id = request.headers.get("User-Agent")
 
-        approved_phones = ["0545494472", "0510870096", "01274477596", "01221581154"]
+        approved_phones = ["0545494472", "0510870096", "01202667762","01274477596", "01221581154"]
         
         if student_phone not in approved_phones:
             return "عذراً، هذا الرقم غير مشترك أو لم يتم تفعيل الاشتراك بعد. تواصل مع الإدارة على الواتساب 01221581154."
@@ -2259,5 +2259,6 @@ if __name__ == "__main__":
     add_approved_student("0510870096")
     add_approved_student("01274477596")
     add_approved_student("01221581154")
+    add_approved_student("01202667762")
     
     app.run(host='0.0.0.0', port=5000)
