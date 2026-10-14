@@ -45,7 +45,7 @@ def login():
         user = cursor.fetchone()
 
         if user is None:
-            cursor.execute("INSERT INTO users (phone, device_id) VALUES (?, ?)", (student_phone, device_id))
+            cursor.execute("INSERT INTO users VALUES (?, ?)", (student_phone, device_id))
             conn.commit()
         elif user[0] is None or user[0] == "":
             cursor.execute("UPDATE users SET device_id = ? WHERE phone = ?", (device_id, student_phone))
