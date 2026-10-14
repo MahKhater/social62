@@ -1,122 +1,13 @@
 import random
 from flask import Flask, render_template_string, request, redirect, url_for, session
-
+import sqlite3
 app = Flask(__name__)
 app.secret_key = 'ser_el_tafouk_secret_key' # مفتاح الجلسة لتخزين الأسئلة والإجابات
-import sqlite3
-from flask import Flask, redirect, render_template, request, session
 
-app = Flask(__name__)
-app.secret_key = "your_secret_key_here"  # مفتاح تشفير الجلسات
-
-
-# 1. إنشاء قاعدة البيانات وجدول المشتركين تلقائياً أول ما السيرفر يفتح
-def init_db():
-  conn = sqlite3.connect("database.db")
-  cursor = conn.cursor()
-  cursor.execute("""
-        CREATE TABLE IF NOT EXISTS users (
-            phone TEXT PRIMARY KEY,
-            device_id TEXT
-        )
-    """)
-  conn.commit()
-  conn.close()
-
-
-# تشغيل إنشاء القاعدة
-init_db()
-
-
-# 2. دالة لإضافة طالب جديد دفع الاشتراك (تستدعيها وقت ما تحب تضيف رقم جديد)
-def add_approved_student(phone_number):
-  conn = sqlite3.connect("database.db")
-  cursor = conn.cursor()
-  # بنسجل الرقم وقصاده device_id فاضي (NULL) لحد ما يدخل أول مرة من جهازه
-  cursor.execute(
-      "INSERT OR IGNORE INTO users (phone, device_id) VALUES (?, NULL)",
-      (phone_number,),
-  )
-  conn.commit()
-  conn.close()
-
-
-# 3. صفحة تسجيل الدخول (مع التأكد إنه مشترك ومطابقة الجهاز)
-@app.route("/login", methods=["POST"])
-def login():
-  student_phone = request.form.get("phone")
-  device_id = request.headers.get("User-Agent")
-
-  conn = sqlite3.connect("database.db")
-  cursor = conn.cursor()
-
-  # نتأكد الأول هل الرقم ده أساساً مضاف في قائمة المشتركين بتوعك؟
-  cursor.execute("SELECT device_id FROM users WHERE phone = ?", (student_phone,))
-  user = cursor.fetchone()
-
-  if not user:
-    conn.close()
-    return (
-        "عذراً، هذا الرقم غير مشترك أو لم يتم تفعيل الاشتراك بعد. تواصل مع"
-        " المنصة."
-    )
-
-  saved_device = user[0]
-
-  # لو الرقم مشترك، بس دي أول مرة يدخل (الجهاز لسه فاضي)، نسجل جهازه الحالي
-  if saved_device is None:
-    cursor.execute(
-        "UPDATE users SET device_id = ? WHERE phone = ?",
-        (device_id, student_phone),
-    )
-    conn.commit()
-
-  # لو مسجل قبل كده بس بيحاول يدخل من جهاز تاني مختلف
-  elif saved_device != device_id:
-    conn.close()
-    return "عذراً، هذا الحساب مفتوح بالفعل على جهاز آخر ولا يمكن فتحه من جهازين."
-
-  conn.close()
-  session["phone"] = student_phone
-  return redirect("/exam")
-
-
-# 4. صفحة الامتحان / المحتوى المحمي
-@app.route("/exam")
-def exam():
-  if "phone" not in session:
-    return redirect("/login")
-
-  student_phone = session["phone"]
-  current_device = request.headers.get("User-Agent")
-
-  conn = sqlite3.connect("database.db")
-  cursor = conn.cursor()
-  cursor.execute("SELECT device_id FROM users WHERE phone = ?", (student_phone,))
-  user = cursor.fetchone()
-  conn.close()
-
-  # التأكد أن الجلسة لسه تخص نفس الجهاز النشط
-  if not user or user[0] != current_device:
-    session.clear()
-    return "تم تسجيل الخروج لتسجيل الدخول من جهاز آخر."
-
-  return render_template("exam.html")
-
-
-if __name__ == "__main__":
-  # تسجيل الرقم التجريبي اللي حضرتك طلبته أول ما السيرفر يشتغل
-  add_approved_student("01221581154")
-  add_approved_student("0545494472")
-  add_approved_student("0510870096")
-  add_approved_student("01274477596")
-
-  # تشغيل السيرفر المحلي (للتجربة على جهازك)
-  app.run(debug=True)
-  QUESTIONS_DB = {
-  "مبتدئ": [
-           {
-  "id": 1,
+QUESTIONS_DB = {
+    "مبتدئ": [
+        {
+       "id": 1,
         "type": "MCQ",
         "prompt": "نتج عن العوامل الباطنية تشكيل التضاريس التالية ما عدا الحركات السطحية. أي مما يلي يعد عاملاً باطنياً؟",
         "options": ["الالتواءات", "المياه", "الرياح", "التعرية المائية"],
@@ -2011,8 +1902,6 @@ if __name__ == "__main__":
    }
   ]
 }
-
-
 @app.route('/', methods=['GET', 'POST'])
 def index():
     level = request.form.get('level', 'متوسط')
@@ -2133,7 +2022,7 @@ MAIN_TEMPLATE = """
        
         <form method="POST">
             <input type="hidden" name="action" value="generate">
-            <div class="section-title">اختبار مستوى الصعوبة الدرس الثاني دراسات اجتماعية سادسة ابتدائي    </div>
+            <div class="section-title">اختبار مستوى الصعوبة الدرس الثاني دراسات اجتماعية تانية اعدادي الترم الاول     </div>
             <div class="levels-container">
                 <label class="level-btn {% if level == 'مبتدئ' %}active{% endif %}">
                     <input type="radio" name="level" value="مبتدئ" {% if level == 'مبتدئ' %}checked{% endif %} onchange="updateActive(this)"> مبتدئ
