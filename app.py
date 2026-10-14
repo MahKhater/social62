@@ -43,7 +43,7 @@ def login():
         cursor = conn.cursor()
         cursor.execute("SELECT device_id FROM users WHERE phone = ?", (student_phone,))
         user = cursor.fetchone()
-        saved_device = user[0] if user else None
+        saved_device = user[0] if user and user[0] else None
 
         if saved_device is None:
             cursor.execute("UPDATE users SET device_id = ? WHERE phone = ?", (device_id, student_phone))
