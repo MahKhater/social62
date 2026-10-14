@@ -47,10 +47,7 @@ def login():
         if user is None:
             cursor.execute("INSERT INTO users VALUES (?, ?)", (student_phone, device_id))
             conn.commit()
-        elif user[0] is None or user[0] == "":
-            cursor.execute("UPDATE users SET device_id = ? WHERE phone = ?", (device_id, student_phone))
-            conn.commit()
-        elif user[0] != device_id:
+        elif user != device_id:
             conn.close()
             return "عذراً، هذا الحساب مفتوح بالفعل على جهاز آخر ولا يمكن تكراره، فضلاً تواصل مع الإدارة على واتساب 01221581154"
 
