@@ -43,13 +43,11 @@ def login():
         cursor = conn.cursor()
         cursor.execute("SELECT device_id FROM users WHERE phone = ?", (student_phone,))
         user = cursor.fetchone()
-        saved_device = user[0] if user and user[0] is not None else None
-
+        saved_device = user if user else None
         if saved_device is None:
             cursor.execute("UPDATE users SET device_id = ? WHERE phone = ?", (device_id, student_phone))
             conn.commit()
         elif saved_device != device_id:
-            conn.close()
             return " عذراً، هذا الحساب مفتوح بالفعل على جهاز آخر ولا يمكن تكراره , فضلا تواصل مع الادارة على واتساب 01221581154!"
 
 
