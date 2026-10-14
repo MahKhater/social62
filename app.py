@@ -1963,7 +1963,33 @@ def login():
         session["phone"] = student_phone
         return redirect(url_for('index'))
 
-    return render_template("login.html")
+  return render_template_string('''
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تسجيل الدخول</title>
+    <style>
+        body { font-family: sans-serif; background-color: #f4f7f6; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .box { background: white; padding: 30px; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); text-align: center; }
+        input { width: 100%; padding: 12px; margin: 15px 0; border: 1px solid #ccc; border-radius: 5px; text-align: center; font-size: 16px; box-sizing: border-box; }
+        button { width: 100%; padding: 12px; background-color: #455a64; color: white; border: none; border-radius: 5px; font-size: 16px; cursor: pointer; font-weight: bold; }
+    </style>
+</head>
+<body>
+<div class="box">
+    <h2>منصة سر التفوق التعليمية</h2>
+    <form action="/login" method="POST">
+        <label>أدخل رقم الموبيل المشترك به:</label>
+        <input type="text" name="phone" placeholder="01xxxxxxxxx" required autocomplete="off">
+        <button type="submit">دخول الامتحان</button>
+    </form>
+</div>
+</body>
+</html>
+''')
+
 
 
 @app.route('/', methods=['GET', 'POST'])
