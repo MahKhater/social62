@@ -37,7 +37,7 @@ def login():
         approved_phones = ["0545494472", "0510870096", "01274477596", "01221581154"]
         
         if student_phone not in approved_phones:
-            return "عذراً، هذا الرقم غير مشترك أو لم يتم تفعيل الاشتراك بعد. تواصل مع الإدارة."
+            return "عذراً، هذا الرقم غير مشترك أو لم يتم تفعيل الاشتراك بعد. تواصل مع الإدارة على الواتساب 01221581154."
             
         conn = sqlite3.connect("database.db")
         cursor = conn.cursor()
@@ -76,7 +76,9 @@ def login():
     <form action="/login" method="POST">
         <label>أدخل رقم الموبيل المشترك به:</label>
         <input type="text" name="phone" placeholder="01xxxxxxxxx" required autocomplete="off">
-        <button type="submit">دخول الامتحان</button>
+        <button type="submit">ابدا مع سر التفوق</button>
+<a href="https://wa.me/201221581154?s=t" style="display: block; width: 100%; padding: 12px; background-color: #25d366; color: white; border-radius: 5px; font-size: 16px; cursor: pointer; font-weight: bold; text-decoration: none; box-sizing: border-box; margin-top: 10px; text-align: center;" target="_blank">💬 للاشتراك اضغط هنا</a>
+
     </form>
 </div>
 </body>
