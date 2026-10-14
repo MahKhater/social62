@@ -1963,10 +1963,10 @@ def login():
         session["phone"] = student_phone
         return redirect(url_for('index'))
 
-return render_template_string('''
-<!DOCTYPE html>
-<html lang="ar" dir="rtl">
-<head>
+  return render_template_string('''
+  <!DOCTYPE html>
+  <html lang="ar" dir="rtl">
+  <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>تسجيل الدخول</title>
