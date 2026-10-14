@@ -34,15 +34,15 @@ def login():
         student_phone = request.form.get("phone")
         device_id = request.headers.get("User-Agent")
 
+        approved_phones = ["0545494472", "0510870096", "01274477596", "01221581154"]
+        
+        if student_phone not in approved_phones:
+            return "عذراً، هذا الرقم غير مشترك أو لم يتم تفعيل الاشتراك بعد. تواصل مع الإدارة."
+            
         conn = sqlite3.connect("database.db")
         cursor = conn.cursor()
         cursor.execute("SELECT device_id FROM users WHERE phone = ?", (student_phone,))
         user = cursor.fetchone()
-
-        if not user:
-            conn.close()
-            return "عذراً، هذا الرقم غير مشترك أو لم يتم تفعيل الاشتراك بعد. تواصل مع الإدارة."
-
         saved_device = user[0] if user else None
 
         if saved_device is None:
