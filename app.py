@@ -43,13 +43,16 @@ def login():
         cursor = conn.cursor()
         cursor.execute("SELECT device_id FROM users WHERE phone = ?", (student_phone,))
         user = cursor.fetchone()
-        saved_device = user if user else None
-        if saved_device is None:
+
+        if user is None:
+            cursor.execute("INSERT INTO users (phone, device_id) VALUES (?, ?)", (student_phone, device_id))
+            conn.commit()
+        elif user[0] is None:
             cursor.execute("UPDATE users SET device_id = ? WHERE phone = ?", (device_id, student_phone))
             conn.commit()
-        elif saved_device != device_id:
-            return " عذراً، هذا الحساب مفتوح بالفعل على جهاز آخر ولا يمكن تكراره , فضلا تواصل مع الادارة على واتساب 01221581154!"
-
+        elif user[0] != device_id:
+            conn.close()
+        return "عذراً، هذا الحساب مفتوح بالفعل على جهاز آخر ولا يمكن تكراره، فضلاً تواصل مع الإدارة على واتساب 01221581154"
 
         conn.close()
         session["phone"] = student_phone
